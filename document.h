@@ -11,6 +11,8 @@
 #include <vector>
 #include "factory.h"
 
+
+
 struct document{
 public:
     document() = default;
@@ -65,6 +67,7 @@ public:
     void add_fig_dop(std::shared_ptr<fig>& ptr, size_t id){
         figs.insert(figs.begin() + id, ptr);
     }
+    
 
 
 private:

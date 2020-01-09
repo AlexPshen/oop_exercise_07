@@ -5,4 +5,7 @@ print
 erase   
 0
 print
+indo
+print
+save
 

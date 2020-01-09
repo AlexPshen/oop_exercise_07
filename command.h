@@ -9,47 +9,49 @@ private:
     struct command{
         size_t id;
         std::shared_ptr<fig> ptr;
-        std::string comm;
+        virtual void undo(document &doc) = 0;
     };
 
     std::vector<std::shared_ptr<command>> opers;
+
+    struct add_com : public command{
+        void undo(document &doc) override {
+            doc.erase_fig(id);
+        }
+    };
+    
+    struct remove_com : public command{
+        void undo(document &doc) override {
+            doc.add_fig_dop(ptr, id);
+        }
+    };
+
 public:
+
     void add(std::istream& is, size_t id){
         add_fig(is, id);
         std::shared_ptr<fig> fig = get_fig(id);
-        std::shared_ptr<command> oper = std::make_shared<command>();
-        oper -> id = id;
-        oper -> ptr = fig;
-        oper -> comm = "add";
-        opers.push_back(oper);
+        std::shared_ptr<add_com> op = std::make_shared<add_com>();
+        op -> id = id;
+        op -> ptr = fig;
+        opers.push_back(op);
     }
 
     void erase(size_t id){
         std::shared_ptr<fig> fig = get_fig(id);
         erase_fig(id);
-        std::shared_ptr<command> oper = std::make_shared<command>();
-        oper -> id = id;
-        oper -> ptr = fig;
-        oper -> comm = "erase";
-        opers.push_back(oper);
+        std::shared_ptr<remove_com> op = std::make_shared<remove_com>();
+        op -> id = id;
+        op -> ptr = fig;
+        opers.push_back(op);
     }
 
     void undo(){
-        if(opers.size() == 0) {
-            std::cout << "operations list is empty \n";
+        if(opers.size() == 0){
+            std::cout << "EMPTY";
             return;
         }
-        std::shared_ptr<command> oper = std::make_shared<command>();
-        oper = opers.back();
-        if(oper -> comm == "add"){
-            erase_fig(oper -> id);
-        } else if(oper -> comm == "erase"){
-            add_fig_dop(oper -> ptr, oper -> id);
-        } else {
-            std::cout << "ERROR";
-            opers.pop_back();
-            return;
-        }
+        opers[opers.size() - 1] -> undo(*this);
         opers.pop_back();
     }
 
