@@ -42,6 +42,8 @@ int main() {
             doc -> undo();
         } else if(command == "exit"){
             break;
+        } else{
+            std::cout << "EROOR";
         }
     }
     return 0;

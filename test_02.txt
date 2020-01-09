@@ -1,0 +1,8 @@
+load file
+print
+add 0 rectangle 0 0 0 1 1 0 1 1
+print
+erase   
+0
+print
+
